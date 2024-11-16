@@ -1,0 +1,17 @@
+env2：
+marking_points：
+
+self.get_marking_points_in_area((746, 671), (811, 740))
+        self.get_marking_points_in_area((671, 727), (760, 808))
+        self.single((544, 740))
+        self.single((446, 1260))
+        self.single((444, 1264))
+
+num：20
+
+env1：
+marking_points：
+self.get_marking_points_in_area((568, 637), (585, 659))
+        self.single((923, 103))
+
+num：32
