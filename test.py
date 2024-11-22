@@ -3,7 +3,7 @@ from RLP2 import *
 import matplotlib.pyplot as plt
 import os
 
-r = RightLeaningPlanning()
+r = RightLeaningPlanning("C:\\Users\\Mr.D\\Desktop\\A\\env4.png")
 
 if r.processed_path:
     fig, ax = plt.subplots()

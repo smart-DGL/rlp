@@ -6,7 +6,7 @@ from Bezier import *
 
 
 class RightLeaningPlanning:
-    def __init__(self, env="C:\\Users\\Mr.D\\Desktop\\A\\env2.jpg"):
+    def __init__(self, env="C:\\Users\\Mr.D\\Desktop\\A\\env1.jpg"):
         """
         初始化右倾规划类。
 
@@ -14,8 +14,8 @@ class RightLeaningPlanning:
             env (str): 环境图像文件路径，默认值为指定路径。
         """
         self.env = Environment(env)  # 创建环境实例
-        # self.env.start = (890, 86)
-        # self.env.goal = (508, 1766)
+        # self.env.start = (678, 70)
+        # self.env.goal = (327, 2170)
         print('start', self.env.start, 'goal', self.env.goal)
         self.start = self.get_vaild_point(self.env.start)
         self.goal = self.get_vaild_point(self.env.goal)
@@ -443,15 +443,15 @@ class RightLeaningPlanning:
                     break
         return path
 
-    def connect_path(self, reprocessed_path):
-        past = copy.deepcopy(reprocessed_path)
+    def connect_path(self, processed_path):
+        past = copy.deepcopy(processed_path)
         past.insert(0, self.env.start)
         past.append(self.env.goal)
         dict_ = {}
         self.env.using_env = self.env.bin_env
         # 遍历 cutting_path 中的每个簇
         for index in range(len(past) - 1):
-
+            path = []
             current_node = past[index]
             next_node = past[index + 1]
 
@@ -468,5 +468,4 @@ class RightLeaningPlanning:
         # 添加最后一个簇的所有点到最终路径中
         for i in reversed(list(dict_.keys())):
             past[i: i] = dict_[i]
-        final_path = list(dict.fromkeys(past))
-        return final_path
+        return past
