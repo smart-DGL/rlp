@@ -4,7 +4,7 @@ import cv2
 
 
 class Environment:
-    def __init__(self, env_png=r"C:\Users\Mr.D\Desktop\A\env3.jpg"):
+    def __init__(self, env_png=r"C:\Users\Mr.D\Desktop\A\env4.png"):
         """
         初始化环境类。
 

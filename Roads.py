@@ -5,17 +5,12 @@ from Env import *
 import matplotlib.pyplot as plt
 
 class Roads:
-    def __init__(self, env=r"C:\Users\Mr.D\Desktop\A\env4.png"):
+    def __init__(self, env=r"C:\Users\Mr.D\Desktop\A2\env3.jpg"):
         self.env = Environment(env)
         self.roads = set()  # 初始化 roads
         self.roads_vector1 = {}  # 初始化 vector1 字典
         self.opposite_point = {}
-        self.marking_points = set()
-        self.clicks = []
-        self.vector = []
-        self.area = []
-        self.use_vector = True  # 初始时使用vector
-        self.num = 15
+        self.num = 30
         # self.roads = np.load('roads.npy', allow_pickle=True)  # 加载道路点集并转换为元组
         # self.preprocessed_neighbors = np.load('preprocessed_neighbors.npy', allow_pickle=True).item()  # 预处理的邻居点
         # self.roads_vector1 = np.load('roads_vector1.npy', allow_pickle=True).item()  # 道路向量
@@ -23,62 +18,9 @@ class Roads:
         self.find_roads()
         self.calculate_vector1()
         self.get_opposite_point()
-        self.add_marking_points()
         self.save('roads.npy', self.roads)  # 包含了拐角点的roads
         self.save('roads_vector1.npy', self.roads_vector1)
         self.save('opposite_point.npy', self.opposite_point)
-        self.save('marking_points.npy', self.marking_points)
-
-    def on_double_click(self, event):
-        if event.dblclick:  # 检查是否为双击
-            x, y = event.xdata, event.ydata
-            if x is not None and y is not None:  # 防止在图外点击
-                print(f'Double clicked at: ({x}, {y})')
-                self.clicks.append((round(y), round(x)))
-                if len(self.clicks) == 2:
-                    # 将点对存储到当前列表
-                    if self.use_vector:
-                        self.vector.append(copy.deepcopy(self.clicks))
-                    else:
-                        self.area.append(copy.deepcopy(self.clicks))
-                    self.clicks.clear()  # 清空列表以等待新的点击
-                    print(self.vector, self.area)
-                    # 切换当前列表
-                    self.use_vector = not self.use_vector
-
-    def close_event(self):
-        # 确保两个列表中的元组个数相同
-        if len(self.vector) > len(self.area):
-            self.vector.pop()
-        elif len(self.area) > len(self.vector):
-            self.area.pop()
-        print(self.vector, '\n', self.area)
-        self.get_marking_points_in_area(self.vector, self.area)
-
-    def add_marking_points(self):
-        fig, ax = plt.subplots()
-        # 绘制环境图像
-        # 反转颜色：将值为 255 的地方变为 0（黑色），将值为 0 的地方变为 255（白色）
-        ax.imshow(self.env.erode_env, cmap='gray')
-
-        for i in self.opposite_point:
-            point = [i, self.opposite_point[i]]
-            point_x, point_y = zip(*point)
-            ax.plot(point_y, point_x, 'b-', linewidth=1, label='opposite_point')
-
-        # 为了避免重复的图例项，只添加一次路径标签
-        handles, labels = ax.get_legend_handles_labels()
-        by_label = dict(zip(labels, handles))
-        ax.legend(by_label.values(), by_label.keys())
-
-        # 设置轴标签
-        ax.set_xlabel('Y')
-        ax.set_ylabel('X')
-
-        cid1 = fig.canvas.mpl_connect('button_press_event', self.on_double_click)
-        fig.canvas.mpl_connect('close_event', lambda event: self.close_event())
-        plt.show()
-        fig.canvas.mpl_disconnect(cid1)  # 断开双击事件连接
 
     def find_roads(self):
         directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -199,36 +141,6 @@ class Roads:
                                 self.opposite_point[point] = next_point
                         else:
                             break
-
-    def get_marking_points_in_area(self, vector, area):
-        while vector and area:
-            # 处理 vector 列表中的第一个子列表
-            vector_points = vector.pop(0)
-            recorded_values = None
-            for (x1, y1), (x2, y2) in [(vector_points[0], vector_points[1])]:
-                min_x, max_x = min(x1, x2), max(x1, x2)
-                min_y, max_y = min(y1, y2), max(y1, y2)
-                for x in range(int(min_x), int(max_x) + 1):
-                    for y in range(int(min_y), int(max_y) + 1):
-                        point = (x, y)
-                        if point in self.opposite_point:
-                            value = self.roads_vector1[point]
-                            if value is not None:
-                                recorded_values = value
-
-            # 处理 area 列表中的第一个子列表
-            area_points = area.pop(0)
-            for (x1, y1), (x2, y2) in [(area_points[0], area_points[1])]:
-                min_x, max_x = min(x1, x2), max(x1, x2)
-                min_y, max_y = min(y1, y2), max(y1, y2)
-                for x in range(int(min_x), int(max_x) + 1):
-                    for y in range(int(min_y), int(max_y) + 1):
-                        point = (x, y)
-                        if point in self.opposite_point:
-                            value = self.roads_vector1[point]
-                            if value == recorded_values:
-                                self.marking_points.add(point)
-                                self.marking_points.add(self.opposite_point[point])
 
     def save(self, file_path, file):
         # 保存文件

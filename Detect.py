@@ -3,7 +3,7 @@ from Env import Environment
 import numpy as np
 
 class Detect:
-    def __init__(self, env="C:\\Users\\Mr.D\\Desktop\\A\\env4.png"):
+    def __init__(self, env="C:\\Users\\Mr.D\\Desktop\\A2\\env1.jpg"):
         """
         初始化右倾规划类。
 
